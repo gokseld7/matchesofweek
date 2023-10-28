@@ -93,15 +93,17 @@ def showAllMatches(matches):
 def main():
     teamNames = {"Fenerbahce", "PSV", "Borussia Dortmund", "Manchester City", "Real Madrid", "Leipzig"}
     matches = []
+    threads = []
     lock = threading.Lock()
 
-    with concurrent.futures.ThreadPoolExecutor() as executor:
-        results = []
-        for teamName in teamNames:
-            results.append(executor.submit(getNextMatch, teamName, matches, lock))
+    for teamName in teamNames:
+        threads.append(threading.Thread(target=getNextMatch, args=(teamName, matches, lock)))
 
-        for f in concurrent.futures.as_completed(results):
-            pass
+    for thread in threads:
+        thread.start()
+
+    for thread in threads:
+        thread.join()
 
     showAllMatches(matches)
 
