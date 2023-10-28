@@ -2,12 +2,13 @@ import requests
 import threading
 from bs4 import BeautifulSoup
 from lxml import etree
+from typing import Union
 
 # TODO: improve sortMatches
 # TODO: write simple GUI witg pyqt
 
 
-def getNextMatchWebRequest(teamName):
+def getNextMatchWebRequest(teamName: str) -> Union[None, etree._Element]:
     url = f"https://www.google.com/search?q={teamName}+next+match"
     HEADERS = (
         {
@@ -26,7 +27,7 @@ def getNextMatchWebRequest(teamName):
     return etree.HTML(str(soup))
 
 
-def getXPaths(data):
+def getXPaths(data: etree._Element) -> dict:
     xPaths = dict()
     index = 3
     commonPath = f"//*[@id='sports-app']/div/div[3]/div[1]/div[{index}]/div/div/div/div[1]/div"
@@ -43,7 +44,7 @@ def getXPaths(data):
     return xPaths
 
 
-def getNextMatch(teamName, matches, lock):
+def getNextMatch(teamName: str, matches: list, lock: threading.Lock) -> None:
     data = getNextMatchWebRequest(teamName)
     if data is not None:
         xPaths = getXPaths(data)
@@ -62,7 +63,7 @@ def getNextMatch(teamName, matches, lock):
             lock.release()
 
 
-def sortMatches(matches):
+def sortMatches(matches: list) -> list:
     # TODO: Add sorting according to time
     todaysMatches = []
     tomorrowsMatches = []
@@ -78,7 +79,7 @@ def sortMatches(matches):
     return todaysMatches + tomorrowsMatches + otherMatches
 
 
-def showAllMatches(matches):
+def showAllMatches(matches: list) -> None:
     matches = sortMatches(matches)
     for match in matches:
         print(20*"-")
