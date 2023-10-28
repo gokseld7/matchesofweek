@@ -3,8 +3,10 @@ import threading
 from bs4 import BeautifulSoup
 from lxml import etree
 from typing import Union
+import datetime as dt
 
-# TODO: improve sortMatches
+# TODO: prepare to get web results all in English and resolve everything in English
+# TODO: after converting English, set the dd/mm or mm/dd format
 # TODO: write simple GUI witg pyqt
 
 
@@ -44,17 +46,41 @@ def getXPaths(data: etree._Element) -> dict:
     return xPaths
 
 
+def parseDateTime(dateTimeStr: str) -> dt.datetime:
+    hour, minute = dateTimeStr.split(',')[1].strip().split(':')
+    hour = int(hour)
+    minute = int(minute)
+
+    if '/' in dateTimeStr:
+        day, month = dateTimeStr.split()[0].split('/')
+        day = int(day)
+        month = int(month)
+        dateTime = dt.datetime(dt.datetime.now().year, month, day, hour, minute, 0)
+        return dateTime
+
+    dateTime = dt.datetime.now()
+    if "yarın" in dateTimeStr or "tomorrow" in dateTimeStr:
+        dateTime + dt.timedelta(days=1)
+
+    dateTime = dateTime.replace(hour=hour)
+    dateTime = dateTime.replace(minute=minute)
+    dateTime = dateTime.replace(second=0)
+
+    return dateTime
+
+
 def getNextMatch(teamName: str, matches: list, lock: threading.Lock) -> None:
     data = getNextMatchWebRequest(teamName)
     if data is not None:
         xPaths = getXPaths(data)
+        lock.acquire()
         try:
-            lock.acquire()
+            dateTime = parseDateTime(f"{data.xpath(xPaths['dateTime'])[0].text}")
             matches.append(
                 {
-                    "match": f'{data.xpath(xPaths["homeTeam"])[0].text} - {data.xpath(xPaths["awayTeam"])[0].text}',
-                    "league": f'{data.xpath(xPaths["leagueName"])[0].text}',
-                    "dateTime": f'{data.xpath(xPaths["dateTime"])[0].text}'
+                    "match": f"{data.xpath(xPaths['homeTeam'])[0].text} - {data.xpath(xPaths['awayTeam'])[0].text}",
+                    "league": f"{data.xpath(xPaths['leagueName'])[0].text}",
+                    "dateTime": dateTime
                 }
             )
         except IndexError:
@@ -63,29 +89,13 @@ def getNextMatch(teamName: str, matches: list, lock: threading.Lock) -> None:
             lock.release()
 
 
-def sortMatches(matches: list) -> list:
-    # TODO: Add sorting according to time
-    todaysMatches = []
-    tomorrowsMatches = []
-    otherMatches = []
-    for match in matches:
-        if "bugün" in match["dateTime"]:
-            todaysMatches.append(match)
-        elif "yarın" in match["dateTime"]:
-            tomorrowsMatches.append(match)
-        else:
-            # TODO: Parse date and sort them too
-            otherMatches.append(match)
-    return todaysMatches + tomorrowsMatches + otherMatches
-
-
 def showAllMatches(matches: list) -> None:
-    matches = sortMatches(matches)
+    matches = sorted(matches, key=lambda x: x["dateTime"])
     for match in matches:
         print(20*"-")
         print(match["match"])
         print(match["league"])
-        print(match["dateTime"])
+        print(match["dateTime"].strftime("%c"))
         print(20*"-")
 
 
