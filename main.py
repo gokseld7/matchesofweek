@@ -31,13 +31,17 @@ def getNextMatchWebRequest(teamName):
 def getXPaths(data):
     xPaths = dict()
     index = 3
-    homeTeam = f'//*[@id="sports-app"]/div/div[3]/div[1]/div[{index}]/div/div/div/div[1]/div/div[2]/div[1]/div/div[1]/div[2]/div/span'
+    commonPath = f"//*[@id='sports-app']/div/div[3]/div[1]/div[{index}]/div/div/div/div[1]/div"
+
+    homeTeam = f"{commonPath}/div[2]/div[1]/div/div[1]/div[2]/div/span"
     if not data.xpath(homeTeam):
         index = 4
-    xPaths["homeTeam"] = f'//*[@id="sports-app"]/div/div[3]/div[1]/div[{index}]/div/div/div/div[1]/div/div[2]/div[1]/div/div[1]/div[2]/div/span'
-    xPaths["awayTeam"] = f'//*[@id="sports-app"]/div/div[3]/div[1]/div[{index}]/div/div/div/div[1]/div/div[2]/div[1]/div/div[3]/div[2]/div/span'
-    xPaths["leagueName"] = f'//*[@id="sports-app"]/div/div[3]/div[1]/div[{index}]/div/div/div/div[1]/div/div[1]/div/span[1]/span[1]/span'
-    xPaths["dateTime"] = f'//*[@id="sports-app"]/div/div[3]/div[1]/div[{index}]/div/div/div/div[1]/div/div[1]/div/span[2]'
+        commonPath = f"//*[@id='sports-app']/div/div[3]/div[1]/div[{index}]/div/div/div/div[1]/div"
+
+    xPaths["homeTeam"] = f"{commonPath}/div[2]/div[1]/div/div[1]/div[2]/div/span"
+    xPaths["awayTeam"] = f"{commonPath}/div[2]/div[1]/div/div[3]/div[2]/div/span"
+    xPaths["leagueName"] = f"{commonPath}/div[1]/div/span[1]/span[1]/span"
+    xPaths["dateTime"] = f"{commonPath}/div[1]/div/span[2]"
     return xPaths
 
 
