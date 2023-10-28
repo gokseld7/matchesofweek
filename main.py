@@ -4,7 +4,6 @@ from bs4 import BeautifulSoup
 from lxml import etree
 
 # TODO: improve sortMatches
-# TODO: dockerize the app and update the HEADERS
 # TODO: write simple GUI witg pyqt
 
 
