@@ -4,6 +4,7 @@ from bs4 import BeautifulSoup
 from lxml import etree
 from typing import Union
 import datetime as dt
+from userconf import favouriteTeams
 
 # TODO: prepare to get web results all in English and resolve everything in English
 # TODO: after converting English, set the dd/mm or mm/dd format
@@ -110,12 +111,11 @@ def showAllMatches(matches: list) -> None:
 
 
 def main():
-    teamNames = {"Fenerbahce", "PSV", "Borussia Dortmund", "Manchester City", "Real Madrid", "Leipzig"}
     matches = []
     threads = []
     lock = threading.Lock()
 
-    for teamName in teamNames:
+    for teamName in favouriteTeams:
         threads.append(threading.Thread(target=getNextMatch, args=(teamName, matches, lock)))
 
     for thread in threads:
