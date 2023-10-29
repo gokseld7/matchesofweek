@@ -23,6 +23,7 @@ def sendGetRequest(url: str, headers: dict) -> Union[str, None]:
 
 
 def getNextMatchWebRequest(teamName: str) -> Union[None, etree._Element]:
+    teamName = teamName.replace(" ", "+")
     url = f"https://www.google.com/search?q={teamName}+next+match"
     headers = (
         {
@@ -113,6 +114,10 @@ def showAllMatches(matches: list) -> None:
 
 
 def main():
+    if type(favouriteTeams) != set:
+        print("Favourite teams in userconf.py is not a set, please edit it and try again.")
+        print("Example userconf.py: favouriteTeams =  {'Fenerbahce', 'PSV'}")
+        return
     matches = []
     threads = []
     lock = threading.Lock()
