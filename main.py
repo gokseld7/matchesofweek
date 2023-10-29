@@ -8,7 +8,7 @@ from userconf import favouriteTeams
 
 # TODO: prepare to get web results all in English and resolve everything in English
 # TODO: after converting English, set the dd/mm or mm/dd format
-# TODO: write simple GUI witg pyqt
+# TODO: write simple GUI with pyqt
 # TODO: Dockerize the app to make this project os agnostic
 # TODO: Is there any way to make getNextMatches better? Maybe getNextMatch as an individual function
 
