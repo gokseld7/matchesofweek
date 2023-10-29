@@ -8,11 +8,21 @@ import datetime as dt
 # TODO: prepare to get web results all in English and resolve everything in English
 # TODO: after converting English, set the dd/mm or mm/dd format
 # TODO: write simple GUI witg pyqt
+# TODO: write unit tests
+
+
+def sendGetRequest(url: str, headers: dict) -> Union[str, None]:
+    max_retries = 3
+    for i in range(max_retries):
+        response = requests.get(url, headers=headers)
+        if response.status_code == 200:
+            return response.text
+    return None
 
 
 def getNextMatchWebRequest(teamName: str) -> Union[None, etree._Element]:
     url = f"https://www.google.com/search?q={teamName}+next+match"
-    HEADERS = (
+    headers = (
         {
             "User-Agent":
             "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/118.0.0.0 Safari/537.36",
@@ -20,12 +30,12 @@ def getNextMatchWebRequest(teamName: str) -> Union[None, etree._Element]:
         }
     )
 
-    resp = requests.get(url, headers=HEADERS)
-    if resp.status_code != 200:
+    response = sendGetRequest(url, headers)
+    if response is None:
         print(f"Failed request for {teamName}!")
         return None
 
-    soup = BeautifulSoup(resp.text, "html.parser")
+    soup = BeautifulSoup(response, "html.parser")
     return etree.HTML(str(soup))
 
 
