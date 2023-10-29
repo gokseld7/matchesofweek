@@ -1,3 +1,3 @@
 # Next matches
 
-Next matches of my favourite teams
+Next matches of your favourite teams
