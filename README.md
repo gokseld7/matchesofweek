@@ -1,3 +1,3 @@
-# Matches of the Week
+# Next matches
 
-Weekly matches of my favourite teams
+Next matches of my favourite teams
