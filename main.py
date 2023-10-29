@@ -1,15 +1,16 @@
 import requests
 import threading
+import datetime as dt
 from bs4 import BeautifulSoup
 from lxml import etree
 from typing import Union
-import datetime as dt
 from userconf import favouriteTeams
 
 # TODO: prepare to get web results all in English and resolve everything in English
 # TODO: after converting English, set the dd/mm or mm/dd format
 # TODO: write simple GUI witg pyqt
-# TODO: write unit tests
+# TODO: Dockerize the app to make this project os agnostic
+# TODO: Is there any way to make getNextMatches better? Maybe getNextMatch as an individual function
 
 
 def sendGetRequest(url: str, headers: dict) -> Union[str, None]:
@@ -58,6 +59,7 @@ def getXPaths(data: etree._Element) -> dict:
 
 
 def parseDateTime(dateTimeStr: str) -> dt.datetime:
+    dateTimeStr = dateTimeStr.lower()
     hour, minute = dateTimeStr.split(',')[1].strip().split(':')
     hour = int(hour)
     minute = int(minute)
@@ -66,7 +68,7 @@ def parseDateTime(dateTimeStr: str) -> dt.datetime:
         day, month = dateTimeStr.split()[0].split('/')
         day = int(day)
         month = int(month)
-        dateTime = dt.datetime(dt.datetime.now().year, month, day, hour, minute, 0)
+        dateTime = dt.datetime(dt.datetime.now().year, month, day, hour, minute, 0, 0)
         return dateTime
 
     dateTime = dt.datetime.now()
@@ -75,12 +77,12 @@ def parseDateTime(dateTimeStr: str) -> dt.datetime:
 
     dateTime = dateTime.replace(hour=hour)
     dateTime = dateTime.replace(minute=minute)
-    dateTime = dateTime.replace(second=0)
+    dateTime = dateTime.replace(second=0).replace(microsecond=0)
 
     return dateTime
 
 
-def getNextMatch(teamName: str, matches: list, lock: threading.Lock) -> None:
+def getNextMatches(teamName: str, matches: list, lock: threading.Lock) -> None:
     data = getNextMatchWebRequest(teamName)
     if data is not None:
         xPaths = getXPaths(data)
@@ -116,7 +118,7 @@ def main():
     lock = threading.Lock()
 
     for teamName in favouriteTeams:
-        threads.append(threading.Thread(target=getNextMatch, args=(teamName, matches, lock)))
+        threads.append(threading.Thread(target=getNextMatches, args=(teamName, matches, lock)))
 
     for thread in threads:
         thread.start()
