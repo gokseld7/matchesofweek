@@ -4,3 +4,5 @@ __pycache__/
 
 # For MacOS
 *.DS_Store
+
+venv

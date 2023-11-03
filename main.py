@@ -74,7 +74,7 @@ def parseDateTime(dateTimeStr: str) -> dt.datetime:
 
     dateTime = dt.datetime.now()
     if "yarın" in dateTimeStr or "tomorrow" in dateTimeStr:
-        dateTime + dt.timedelta(days=1)
+        dateTime = dateTime + dt.timedelta(days=1)
 
     dateTime = dateTime.replace(hour=hour)
     dateTime = dateTime.replace(minute=minute)
