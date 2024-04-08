@@ -24,9 +24,9 @@ def get_request(url: str, headers: dict) -> Union[str, None]:
     return None
 
 
-def get_next_match_web_request(teamName: str) -> Union[None, etree._Element]:
-    teamName = teamName.replace(" ", "+")
-    url = f"https://www.google.com/search?q={teamName}+next+match"
+def get_next_match_web_request(team_name: str) -> Union[None, etree._Element]:
+    team_name = team_name.replace(" ", "+")
+    url = f"https://www.google.com/search?q={team_name}+next+match"
     headers = (
         {
             "User-Agent":
@@ -37,7 +37,7 @@ def get_next_match_web_request(teamName: str) -> Union[None, etree._Element]:
 
     response = get_request(url, headers)
     if response is None:
-        print(f"Failed request for {teamName}!")
+        print(f"Failed request for {team_name}!")
         return None
 
     soup = BeautifulSoup(response, "html.parser")
